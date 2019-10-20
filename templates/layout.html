@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% if title %}
+        <title>1minpitch - {{ title }} </title>
+    {% else %}
+        <title>1minpitch</title>
+    {% endif %}
+</head>
+<body>
+   {% block content %}{% endblock %}
+</body>
+</html>
