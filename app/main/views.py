@@ -28,26 +28,29 @@ def home():
 def about():
     return render_template('about.html', title = 'about' )
 
-@main.route('/')
-
 @main.route('/register', methods= ['GET', 'POST'])
 def register():
+    
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
+        user = User(email = form.email.data, username = form.username.data,password = form.password.data)
+        db.session.add(user)
+        db.session.commit()
         return redirect(url_for('home'))
+        flash(f'Account created for {form.username.data}!', 'success')
+        
     return render_template('register.html', title = register ,form = form)
 
 @main.route('/login',methods= ['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
-            flash('You have been logged in!','success')
-            return redirect(url_for('home'))
+        # if form.email.data == 'admin@blog.com' and form.password.data == 'password':
+        flash('You have been logged in!','success')
+        return redirect(url_for('home'))
 
-        else:
-            flash('Login failed. Please check username and password','danger')
+        # else:
+        #     flash('Login failed. Please check username and password','danger')
     return render_template('login.html', title = login ,form = form)
 
 
