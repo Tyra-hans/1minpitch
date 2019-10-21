@@ -27,6 +27,8 @@ def home():
 def about():
     return render_template('about.html', title = 'about' )
 
+@main.route('/')
+
 @main.route('/register', methods= ['GET', 'POST'])
 def register():
     form = RegistrationForm()
