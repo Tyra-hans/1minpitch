@@ -1,3 +1,5 @@
+from . import db
+
 class Pitches:
     '''
     Pitches class to define pitch objects
