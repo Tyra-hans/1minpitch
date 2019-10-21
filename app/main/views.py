@@ -2,6 +2,7 @@ from flask import Flask,render_template, url_for, flash, redirect
 from .forms import RegistrationForm, LoginForm
 from . import main
 from ..models import Pitches
+from flask_login import login_required
 
 #views
 pitches = [
@@ -48,3 +49,5 @@ def login():
         else:
             flash('Login failed. Please check username and password','danger')
     return render_template('login.html', title = login ,form = form)
+
+
