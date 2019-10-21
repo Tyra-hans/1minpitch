@@ -1,7 +1,7 @@
 from flask import Flask,render_template, url_for, flash, redirect
 from .forms import RegistrationForm, LoginForm
 from . import main
-from ..models import Pitches
+from ..models import Pitches,User
 from flask_login import login_required
 
 #views
@@ -30,6 +30,7 @@ def about():
 
 @main.route('/register', methods= ['GET', 'POST'])
 def register():
+    # import pdb; pdb.set_trace()
     
     form = RegistrationForm()
     if form.validate_on_submit():
