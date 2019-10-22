@@ -6,17 +6,26 @@ from . import login_manager
 
 
 
-
 class Pitches:
     '''
     Pitches class to define pitch objects
     '''
+    all_pitches = []
+
     def __init__(self,category,title,content,upvote,downvote):
         self.category= category
         self.title = title
         self.content = content
         self.upvote = upvote
         self.downvote = downvote
+
+    def save_pitch(self):
+        Pitch.all_pitches.append(self)
+
+    @classmethod
+    def clear_pitches(cls):
+        Pitch.all_pitches.clear()
+    
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -31,45 +40,54 @@ class Role(db.Model):
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
-
+    
     id = db.Column(db.Integer,primary_key = True)
     username = db.Column(db.String(255),index = True)
     email = db.Column(db.String(255),unique = True,index = True)
     role_id = db.Column(db.Integer,db.ForeignKey('roles.id'))
     image_file = db.Column(db.String(20), default='default.jpg')
+    pass_secure = db.Column(db.String(255))
     password_hash = db.Column(db.String(255))
-    pitches = db.relationship('Pitch', backref= 'author', lazy=True)
+
+    @property
+    def password(self):
+        raise AttributeError('You cannot read the password attribute')
+
+    
+    @password.setter
+    def password(self, password):
+        self.pass_secure = generate_password_hash(password)
+
+    #method that takes ,hashes and compares our password
+    def verify_password(self,password):
+        return check_password_hash(self.pass_secure,password)
+
 
     def __repr__(self):
         return f"User ('{self.username}' , '{self.email}' , '{self.image_file}')"
 
 
 class Pitch(db.Model):
+    __tablename__ = 'pitches'
+
+    
+
+
     id = db.Column(db.Integer,primary_key = 'True')
     title = db.Column(db.String(100))
     date_posted = db.Column(db.DateTime,default =datetime.utcnow)
     content = db.Column(db.Text)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    category = db.Column(db.Text)
+    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    
     def __repr__(self):
         return f"Pitch ('{self.title}' , '{self.date_posted}')"
 
-    # @property
-    # def password(self):
-    #     raise AttributeError('You cannot read the password attribute')
-
-    # @password.setter
-    # def password(self, password):
-    #     self.pass_secure = generate_password_hash(password)
-
-
-    # def verify_password(self,password):
-    #         return check_password_hash(self.pass_secure,password)
-
-    # @login_manager.user_loader
-    # def load_user(user_id):
-    #     return User.query.get(int(user_id))
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
 
             
-    # def __repr__(self):
-    #     return f'User {self.username}'
+    def __repr__(self):
+        return f"User ('{self.title}' , '{self.category}' , '{self.content}')"

@@ -1,28 +1,51 @@
-from flask import Flask,render_template, url_for, flash, redirect
+from flask import Flask,render_template, url_for, flash, redirect, request
 from .forms import RegistrationForm, LoginForm
 from . import main
-from ..models import Pitches,User
-from flask_login import login_required
+from ..models import Pitches,User,db
+from flask_login import login_required, login_user
 
 #views
-pitches = [
+pitchesexamples = [
     {
         'author' : 'Tyra Hans' ,
         'title' : 'Pitch 1',
+        'category' : 'Business',
         'content' : 'First pitch content',
         'date_posted' : 'April 20,2019'
     },
     {
         'author' : 'Trevor TheTrev' ,
         'title' : 'Pitch 2',
+        'category' : 'Pick-up lines',
         'content' : 'Second pitch content',
         'date_posted' : 'May 6,2019'
+    },
+    {
+        'author' : 'Amy Lasu' ,
+        'title' : 'Pitch 3',
+        'category' : 'one-liners',
+        'content' : 'Third pitch content',
+        'date_posted' : 'June 7,2019'
+    },
+    {
+        'author' : 'Dan Kioi' ,
+        'title' : 'Pitch 4',
+        'category' : 'puns',
+        'content' : 'Fourth pitch content',
+        'date_posted' : 'July 8,2019'
+    },
+    {
+        'author' : 'Ren Baby' ,
+        'title' : 'Pitch 5',
+        'category' : 'one-liners',
+        'content' : 'Fifth pitch content',
+        'date_posted' : 'Aug 7,2019'
     },
 ]
 
 @main.route('/')
 def home():
-    return render_template('index.html', posts = pitches)
+    return render_template('index.html', posts = pitchesexamples)
 
 @main.route('/about')
 def about():
@@ -30,28 +53,46 @@ def about():
 
 @main.route('/register', methods= ['GET', 'POST'])
 def register():
-    # import pdb; pdb.set_trace()
+    
     
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(email = form.email.data, username = form.username.data,password = form.password.data)
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for('home'))
+        # import pdb; pdb.set_trace()
+        return redirect(url_for('main.home'))
         flash(f'Account created for {form.username.data}!', 'success')
         
     return render_template('register.html', title = register ,form = form)
 
 @main.route('/login',methods= ['GET', 'POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        # if form.email.data == 'admin@blog.com' and form.password.data == 'password':
+    login_form = LoginForm()
+    # import pdb; pdb.set_trace()
+    if login_form.validate_on_submit():
         flash('You have been logged in!','success')
-        return redirect(url_for('home'))
+        user = User.query.filter_by(email = login_form.email.data).first()
+        if user is not None and user.verify_password(login_form.password.data):
+            login_user(user,login_form.remember.data)
+            return redirect(request.args.get('next') or url_for('main.home'))
+        flash('Invalid username or Password')
+        title = "onepitch login"
 
-        # else:
-        #     flash('Login failed. Please check username and password','danger')
-    return render_template('login.html', title = login ,form = form)
+    
+        # if form.email.data == 'admin@blog.com' and form.password.data == 'password':
+        
+        return redirect(url_for('main.home'))
+
+    else:
+        flash('Login failed. Please check username and password','danger')
+
+         
+    return render_template('login.html', title = login ,login_form = login_form)
+
+@main.route('/')
+def pitches():
+    return render_template('pitch.html', posts = pitches)
+
 
 
