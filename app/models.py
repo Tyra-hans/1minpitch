@@ -45,9 +45,10 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(255),index = True)
     email = db.Column(db.String(255),unique = True,index = True)
     role_id = db.Column(db.Integer,db.ForeignKey('roles.id'))
-    image_file = db.Column(db.String(20), default='default.jpg')
+    image_file = db.Column(db.String(20))
+    bio = db.Column(db.String(255))
     pass_secure = db.Column(db.String(255))
-    password_hash = db.Column(db.String(255))
+    # password_hash = db.Column(db.String(255))
 
     @property
     def password(self):
