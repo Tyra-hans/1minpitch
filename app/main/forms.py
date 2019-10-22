@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired , Length, Email, EqualTo
 from flask_bootstrap import Bootstrap
 
@@ -22,4 +22,8 @@ class LoginForm(FlaskForm):
     pass_secure = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('remember', default=False)
     submit = SubmitField('LogIn')
+
+class UpdateProfile(FlaskForm):
+    bio = TextAreaField('Tell us about you.',validators = [DataRequired()])
+    submit = SubmitField('Submit')
     
