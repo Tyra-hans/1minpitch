@@ -1,8 +1,10 @@
 from flask import Flask,render_template, url_for, flash, redirect, request, abort
 from .forms import RegistrationForm, LoginForm, UpdateProfile
 from . import main
-from ..models import Pitches,User,db
+from ..models import Pitches,User,db 
 from flask_login import login_required, login_user
+from .. import photos
+from ..email import mail_message
 
 #views
 pitchesexamples = [
@@ -61,8 +63,10 @@ def register():
         db.session.add(user)
         db.session.commit()
         # import pdb; pdb.set_trace()
+        mail_message("Welcome to 1minpitch!","email/welcome_user",user.email,user=user)
         return redirect(url_for('main.login'))
         flash(f'Account created for {form.username.data}!', 'success')
+        
         
     return render_template('register.html', title = register ,form = form)
 
@@ -81,7 +85,7 @@ def login():
         else:
             flash('Login failed. Please check username and password','danger')
         
-        title = "onepitch login"
+        title = "minpitch login"
         
         
 
@@ -125,4 +129,15 @@ def update_profile(uname):
         return redirect(url_for('main.profile',uname=user.username))
 
     return render_template('updateprof.html',form =form)
+
+@main.route('/user/<uname>/update/pic',methods= ['POST'])
+@login_required
+def update_pic(uname):
+    user = User.query.filter_by(username = uname).first()
+    if 'photo' in request.files:
+        filename = photos.save(request.files['photo'])
+        path = f'photos/{filename}'
+        user.image_file = path
+        db.session.commit()
+    return redirect(url_for('main.profile',uname=uname))
 
