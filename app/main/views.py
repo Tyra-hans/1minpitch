@@ -75,7 +75,7 @@ def login():
         if user is not None and user.verify_password(login_form.pass_secure.data):
             login_user(user,login_form.remember.data)
             flash('You have been logged in!','success')
-            return redirect(request.args.get('next') or url_for('main.profile'))
+            return redirect(url_for('main.profile', uname=user.username))
             # return render_template('profile.html')
 
         else:
@@ -96,11 +96,11 @@ def login():
 def pitches():
     return render_template('pitch.html', posts = pitches)
 
-@main.route('/user/<email>')
-def profile(email):
-    import pdb; pdb.set_trace()
-    email = email
-    user = User.query.filter_by(email = email).first()
+@main.route('/user/<uname>')
+@login_required
+def profile(uname):
+    # import pdb; pdb.set_trace()
+    user = User.query.filter_by(username = uname).first()
     if user is None:
         abort(404)
 
