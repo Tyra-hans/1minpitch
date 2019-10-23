@@ -69,16 +69,16 @@ class Pitch(db.Model):
         pitches = Pitch.query.filter_by(type_id = id).all()
         return pitches
     
-    # def __repr__(self):
-    #     return f"Pitch ('{self.title}' , '{self.date_posted}')"
+    def __repr__(self):
+        return f"Pitch ('{self.title}' , '{self.date_posted}')"
 
-    # @login_manager.user_loader
-    # def load_user(user_id):
-    #     return User.query.get(int(user_id))
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
 
             
-    # def __repr__(self):
-    #     return f"User ('{self.title}' , '{self.category}' , '{self.content}')"
+    def __repr__(self):
+        return f"User ('{self.title}' , '{self.category}' , '{self.content}')"
 
 class Category(db.Model):
     __tablename__ = 'category'

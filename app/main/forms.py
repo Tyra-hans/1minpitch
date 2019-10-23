@@ -37,4 +37,14 @@ class LoginForm(FlaskForm):
 class UpdateProfile(FlaskForm):
     bio = TextAreaField('Tell us about you.',validators = [DataRequired()])
     submit = SubmitField('Submit')
+
+class PitchForm(FlaskForm):
+    category = StringField('category', validators=[DataRequired()], render_kw={"placeholder": "Select category"})
+    title = StringField(' Title', validators = [DataRequired()])
+    pitch = TextAreaField('Your Pitch', validators = [DataRequired()])
+    submit = SubmitField('Submit')
+    
+
+
+
     

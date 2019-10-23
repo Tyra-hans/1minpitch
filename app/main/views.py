@@ -1,5 +1,5 @@
 from flask import Flask,render_template, url_for, flash, redirect, request, abort
-from .forms import RegistrationForm, LoginForm, UpdateProfile
+from .forms import RegistrationForm, LoginForm, UpdateProfile, PitchForm
 from . import main
 from ..models import Pitch,User,db 
 from flask_login import login_required, login_user
@@ -44,6 +44,7 @@ pitchesexamples = [
         'date_posted' : 'Aug 7,2019'
     },
 ]
+
 
 @main.route('/')
 def home():
@@ -140,4 +141,15 @@ def update_pic(uname):
         user.image_file = path
         db.session.commit()
     return redirect(url_for('main.profile',uname=uname))
+
+
+@main.route('/pitches',methods=['GET','POST'])
+def pitch():
+    '''
+    A view function that will return pitches form
+    '''
+    form = PitchForm()
+    
+    
+    return render_template('pitch.html', form=form)
 
