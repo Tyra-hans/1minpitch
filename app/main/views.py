@@ -1,7 +1,7 @@
 from flask import Flask,render_template, url_for, flash, redirect, request, abort
 from .forms import RegistrationForm, LoginForm, UpdateProfile
 from . import main
-from ..models import Pitches,User,db 
+from ..models import Pitch,User,db 
 from flask_login import login_required, login_user
 from .. import photos
 from ..email import mail_message

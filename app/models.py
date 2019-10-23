@@ -4,27 +4,6 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin
 from . import login_manager
 
-
-
-class Pitches:
-    '''
-    Pitches class to define pitch objects
-    '''
-    all_pitches = []
-
-    def __init__(self,category,title,content,upvote,downvote):
-        self.category= category
-        self.title = title
-        self.content = content
-        self.upvote = upvote
-        self.downvote = downvote
-
-    def save_pitch(self):
-        Pitch.all_pitches.append(self)
-
-    @classmethod
-    def clear_pitches(cls):
-        Pitch.all_pitches.clear()
     
 
 class Role(db.Model):
@@ -74,28 +53,37 @@ class Pitch(db.Model):
     __tablename__ = 'pitches'
 
     id = db.Column(db.Integer,primary_key = 'True')
-    title = db.Column(db.String(100))
-    date_posted = db.Column(db.DateTime,default =datetime.utcnow)
-    content = db.Column(db.Text)
+    title = db.Column(db.String(100), index = True)
+    time = db.Column(db.DateTime,default =datetime.utcnow)
+    pitch = db.Column(db.String(300), index = True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    comments = db.relationship('Comment', backref = 'pitch', lazy = 'dynamic')
 
+    def save_pitch(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get_pitches(cls, id):
+        pitches = Pitch.query.filter_by(type_id = id).all()
+        return pitches
     
-    def __repr__(self):
-        return f"Pitch ('{self.title}' , '{self.date_posted}')"
+    # def __repr__(self):
+    #     return f"Pitch ('{self.title}' , '{self.date_posted}')"
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(int(user_id))
+    # @login_manager.user_loader
+    # def load_user(user_id):
+    #     return User.query.get(int(user_id))
 
             
-    def __repr__(self):
-        return f"User ('{self.title}' , '{self.category}' , '{self.content}')"
+    # def __repr__(self):
+    #     return f"User ('{self.title}' , '{self.category}' , '{self.content}')"
 
 class Category(db.Model):
     __tablename__ = 'category'
 
-    id.db.Column(db.Integer, primary_key = True)
+    id= db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(255), index = True)
     pitches = db.relationship('Pitch', backref = 'type', lazy = 'dynamic')
 
@@ -103,4 +91,20 @@ class Category(db.Model):
     def get_categories(cls):
         types = Types.query.all()
         return types
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    
+    id = db.Column(db.Integer, primary_key = True)
+    comment_post = db.Column(db.String(255),index=True)
+    time = db.Column(db.DateTime,default = datetime.utcnow )
+    pitch_id = db.Column(db.Integer, db.ForeignKey('pitches.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    def save_comments(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get_comments(cls, id):
+        comments = Comment.query.filter_by(pitch_id=id).all()
+        return comments
