@@ -49,6 +49,8 @@ class User(UserMixin, db.Model):
     bio = db.Column(db.String(255))
     pass_secure = db.Column(db.String(255))
     # password_hash = db.Column(db.String(255))
+    pitches =  db.relationship('Pitch', backref = 'user', lazy = "dynamic")
+    comments = db.relationship('Comment', backref = 'user', lazy = "dynamic")
 
     @property
     def password(self):
@@ -71,15 +73,12 @@ class User(UserMixin, db.Model):
 class Pitch(db.Model):
     __tablename__ = 'pitches'
 
-    
-
-
     id = db.Column(db.Integer,primary_key = 'True')
     title = db.Column(db.String(100))
     date_posted = db.Column(db.DateTime,default =datetime.utcnow)
     content = db.Column(db.Text)
-    category = db.Column(db.Text)
-    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     
     def __repr__(self):
@@ -92,3 +91,16 @@ class Pitch(db.Model):
             
     def __repr__(self):
         return f"User ('{self.title}' , '{self.category}' , '{self.content}')"
+
+class Category(db.Model):
+    __tablename__ = 'category'
+
+    id.db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(255), index = True)
+    pitches = db.relationship('Pitch', backref = 'type', lazy = 'dynamic')
+
+    @classmethod
+    def get_categories(cls):
+        types = Types.query.all()
+        return types
+
