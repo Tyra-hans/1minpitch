@@ -1,0 +1,21 @@
+{% extends 'layout.html'%}
+# imported form flask bootstrap allowing rendering of forms
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+{% for message in get_flashed_messages() %}
+{{message}}
+{% endfor%}
+<h1 class="well" style="background-color:#FFCCFF; text-align: center;">Comments Section </h1>
+<div class="container">
+    <a href="#">..</a>
+</div>
+<div class="container" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8xNmyFwW3myxRBRWedhctgkdZ36_T_2PYfl4uhTmGPPEKF4-N'); height:80%;">
+{{ wtf.quick_form(comment_form) }}
+{% for comment in comments  %}
+<div class="well">
+<ul>{{comment.comment_post}}</ul>
+</div>
+{% endfor %}
+</div>
+{% endblock%}
+

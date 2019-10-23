@@ -52,11 +52,11 @@ class User(UserMixin, db.Model):
 class Pitch(db.Model):
     __tablename__ = 'pitches'
 
-    id = db.Column(db.Integer,primary_key = 'True')
+    id = db.Column(db.Integer,primary_key = True)
     title = db.Column(db.String(100), index = True)
     time = db.Column(db.DateTime,default =datetime.utcnow)
     pitch = db.Column(db.String(300), index = True)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    category = db.Column(db.Integer, db.ForeignKey('category.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref = 'pitch', lazy = 'dynamic')
 
@@ -78,19 +78,9 @@ class Pitch(db.Model):
 
             
     def __repr__(self):
-        return f"User ('{self.title}' , '{self.category}' , '{self.content}')"
+        return f"User ('{self.title}' , '{self.category}')"
 
-class Category(db.Model):
-    __tablename__ = 'category'
 
-    id= db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(255), index = True)
-    pitches = db.relationship('Pitch', backref = 'type', lazy = 'dynamic')
-
-    @classmethod
-    def get_categories(cls):
-        types = Types.query.all()
-        return types
 class Comment(db.Model):
     __tablename__ = 'comments'
     
@@ -108,3 +98,15 @@ class Comment(db.Model):
     def get_comments(cls, id):
         comments = Comment.query.filter_by(pitch_id=id).all()
         return comments
+
+class Category(db.Model):
+    __tablename__ = 'category'
+
+    id= db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(255), index = True)
+    pitches = db.relationship('Pitch', backref = 'type', lazy = 'dynamic')
+
+    @classmethod
+    def get_categories(cls):
+        category = Category.query.all()
+        return category

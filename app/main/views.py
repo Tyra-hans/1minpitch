@@ -1,8 +1,8 @@
 from flask import Flask,render_template, url_for, flash, redirect, request, abort
-from .forms import RegistrationForm, LoginForm, UpdateProfile, PitchForm
+from .forms import RegistrationForm, LoginForm, UpdateProfile, PitchForm, SharePitchForm, CommentForm
 from . import main
-from ..models import Pitch,User,db 
-from flask_login import login_required, login_user
+from ..models import Pitch,User,db , Comment
+from flask_login import login_required, login_user , current_user
 from .. import photos
 from ..email import mail_message
 
@@ -143,13 +143,89 @@ def update_pic(uname):
     return redirect(url_for('main.profile',uname=uname))
 
 
-@main.route('/pitches',methods=['GET','POST'])
+@main.route('/business', methods=['GET','POST'])
+@login_required
+def business():
+    pitch_form=PitchForm()
+    if pitch_form.validate_on_submit():
+        # import pdb; pdb.set_trace()        
+        business = Pitch(pitch=pitch_form.pitch.data,title = pitch_form.title.data)
+        db.session.add(business)
+        db.session.commit()
+    business = Pitch.query.all()
+    return render_template('business.html',business=business,pitch_form=pitch_form)
+
+@main.route('/pitch', methods=['GET','POST'])
+@login_required
 def pitch():
+    form = SharePitchForm()
     '''
-    A view function that will return pitches form
+    View share_pitch page function that returns the pitch-sharing page and its form
     '''
-    form = PitchForm()
-    
-    
+    # import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
+    pitch = Pitch(pitch=form.pitch.data,category=form.cat.data)
+    db.session.add(pitch)
+    db.session.commit()
     return render_template('pitch.html', form=form)
+
+@main.route('/pickuplines', methods=['GET','POST'])
+@login_required
+def pickuplines():
+    pitch_form=PitchForm()
+    if pitch_form.validate_on_submit():
+        # import pdb; pdb.set_trace()        
+        pickuplines = Pitch(pitch=pitch_form.pitch.data,title = pitch_form.title.data)
+        db.session.add(pickuplines)
+        db.session.commit()
+    pickuplines = Pitch.query.all()
+    return render_template('pickup_lines.html',pickuplines=pickuplines,pitch_form=pitch_form)
+
+@main.route('/puns', methods=['GET','POST'])
+@login_required
+def puns():
+    pitch_form=PitchForm()
+    if pitch_form.validate_on_submit():
+        # import pdb; pdb.set_trace()        
+        puns = Pitch(pitch=pitch_form.pitch.data,title = pitch_form.title.data)
+        db.session.add(puns)
+        db.session.commit()
+    puns = Pitch.query.all()
+    return render_template('puns.html',puns=puns,pitch_form=pitch_form)
+
+@main.route('/oneliners', methods=['GET','POST'])
+@login_required
+def oneliners():
+    pitch_form=PitchForm()
+    if pitch_form.validate_on_submit():
+        # import pdb; pdb.set_trace()        
+        oneliners = Pitch(pitch=pitch_form.pitch.data,title = pitch_form.title.data)
+        db.session.add(oneliners)
+        db.session.commit()
+    oneliners = Pitch.query.all()
+    return render_template('one-liners.html',oneliners=oneliners,pitch_form=pitch_form)
+
+
+
+#routing for comments
+@main.route('/comments/<int:id>', methods=['GET','POST'])
+@login_required
+def comment(id):
+    comment_form=CommentForm()
+    if comment_form.validate_on_submit():
+        
+        new_comment = Comment(comment_post=comment_form.description.data,pitch_id=id,user=current_user)
+        db.session.add(new_comment)
+        db.session.commit()
+    comments = Comment.query.filter_by(pitch_id=id)
+    
+    return render_template('comment.html',comments=comments,comment_form=comment_form)
+
+
+
+
+
+
+
+
 
