@@ -25,11 +25,15 @@
                         <a class="nav-item nav-link" href="/">Home</a>
                         <a class="nav-item nav-link" href="{{ url_for('main.about') }}">About</a>
                     </div>
-                    <!-- Navbar Right Side -->
-                    <div class="navbar-nav">
-                        <a class="nav-item nav-link"  href="{{ url_for('main.login') }}">Login</a>
-                        <a class="nav-item nav-link" href="{{ url_for('main.register') }}">Register</a>
-                    </div>
+                  
+
+                    <div class="navbar-nav ml-auto">
+                            {% if current_user.is_authenticated %}
+                            <a class="nav-item nav-link" href="{{url_for('main.profile',uname=current_user.username)}}" title="profile"> {{current_user.username}}</a>
+                            <a class="nav-item nav-link" href="{{url_for('main.logout')}}">Log out </a>
+                            {% else %}
+                            <a class="nav-item nav-link" href="{{url_for('main.login')}}">Log in</a>
+                            {%endif%}
                 </div>
             </div>
         </nav>
@@ -53,10 +57,10 @@
                     <h3>Categories</h3>
                     <p class='text-muted'>See what others have pitched.
                     <ul class="list-group">
-                        <li class="list-group-item list-group-item-light"><a class="article-title" href="{{url_for('main.business')}}">Business</a></li>
-                        <li class="list-group-item list-group-item-light"><a class="article-title" href="{{url_for('main.pickuplines')}}">Pick-up lines</a></li>
-                        <li class="list-group-item list-group-item-light"><a class="article-title" href="{{url_for('main.oneliners')}}">one-liners</a></li>
-                        <li class="list-group-item list-group-item-light"><a class="article-title" href="{{url_for('main.puns')}}">puns</a></li>
+                        <li class="list-group-item list-group-item-light"><a class="article-title" href="/category/1">Sales</a></li>
+                        <li class="list-group-item list-group-item-light"><a class="article-title" href="/category/2">Pick-up lines</a></li>
+                        <li class="list-group-item list-group-item-light"><a class="article-title" href="/category/3">one-liners</a></li>
+                        <li class="list-group-item list-group-item-light"><a class="article-title" href="/category/4">puns</a></li>
                     </ul>
                     </p>
                 </div>

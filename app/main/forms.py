@@ -3,13 +3,10 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextA
 from wtforms.validators import DataRequired , Length, Email, EqualTo
 from flask_bootstrap import Bootstrap
 from wtforms import ValidationError
-from ..models import User,Category
+from ..models import User
 import wtforms
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
-def choice_query():
-    cat = Category.query.all()
-    return cat
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', 
@@ -44,29 +41,18 @@ class UpdateProfile(FlaskForm):
     submit = SubmitField('Submit')
 
 class PitchForm(FlaskForm):
-    pitch = StringField('Category' ,validators=[DataRequired()])
-    title = StringField('Enter Your Name' ,validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-# choices =  Category.query.all()
-class SharePitchForm(FlaskForm):
-    # pitch_category = StringField('', validators=[Required()], render_kw={"placeholder": "Select pitch category"})
     
-    # select option
-    # pitch_category = SelectField(' Pitch here!', choices=choices)
-    cat = QuerySelectField(query_factory=choice_query, allow_blank=True)
-    pitch = TextAreaField('', validators=[DataRequired()], render_kw={"placeholder": "Write your pitch here :)"})
-    # contributor_name = StringField('', validators=[Required()], render_kw={"placeholder":"Write your username"})
-    # username should pick from current user's username
+    description = TextAreaField('Your Pitch', validators = [DataRequired()])
     submit = SubmitField('Submit')
-    # category_select_field = wtforms.SelectField(label="Category")
+
+class CommentsForm(FlaskForm):
+    comment = TextAreaField('Comments', validators = [DataRequired()])
+    submit = SubmitField('Submit')
 
 
 
 
-class CommentForm(FlaskForm):
-    description = StringField('Review title' ,validators=[DataRequired()])
-    submit = SubmitField('Submit')  
+
 
 
 
